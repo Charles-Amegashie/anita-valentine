@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For Anita ❤️</title>
+  <style>
+    :root{
+      --red:#e11d48;
+      --soft:#fff1f2;
+      --ink:#0f172a;
+      --muted:#475569;
+      --card:#ffffff;
+      --border:#ffe4e6;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(900px 420px at 20% 10%, var(--soft), transparent 55%),
+        radial-gradient(900px 420px at 80% 0%, #ffe4e6, transparent 60%),
+        #ffffff;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .wrap{width:min(860px, 100%)}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:24px;
+      box-shadow:0 12px 30px rgba(15,23,42,.08);
+      overflow:hidden;
+    }
+    header{
+      padding:22px 22px 16px;
+      border-bottom:1px solid var(--border);
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .title{display:flex; flex-direction:column; gap:6px;}
+    h1{margin:0; font-size:22px; letter-spacing:.2px}
+    .sub{margin:0; color:var(--muted); font-size:14px}
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      color:var(--red);
+      background:#fff;
+      font-weight:600;
+      font-size:13px;
+      user-select:none;
+    }
+    main{padding:22px}
+    .grid{display:grid; grid-template-columns: 1.2fr .8fr; gap:18px;}
+    @media (max-width:780px){ .grid{grid-template-columns:1fr} }
+    .panel{
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
+      background:#fff;
+    }
+    .label{color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.12em}
+    .q{margin:10px 0 14px; font-size:18px; line-height:1.3;}
+    .choices{display:grid; gap:10px}
+    button.choice{
+      width:100%;
+      text-align:left;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#fff;
+      font-size:15px;
+      cursor:pointer;
+      transition:.15s transform, .15s border, .15s background;
+    }
+    button.choice:hover{ transform: translateY(-1px); border-color:#fecdd3; background:#fff7f8; }
+
+    /* Text input (Q4) */
+    .textWrap{display:none; gap:10px; flex-direction:column}
+    input[type="text"]{
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      font-size:15px;
+      outline:none;
+    }
+    input[type="text"]:focus{ border-color:#fecdd3; }
+    .btn{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#fff;
+      font-weight:600;
+      cursor:pointer;
+    }
+    .btn.primary{
+      background:var(--red);
+      color:#fff;
+      border-color:var(--red);
+    }
+
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+    .progress{display:flex; gap:8px; align-items:center; font-size:13px; color:var(--muted);}
+    .dots{display:flex; gap:6px}
+    .dot{width:10px; height:10px; border-radius:50%; background:#ffe4e6; border:1px solid #fecdd3;}
+    .dot.on{ background:var(--red); border-color:var(--red); }
+
+    .msg{
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px dashed #fecdd3;
+      color:var(--muted);
+      font-size:14px;
+      min-height:44px;
+      display:flex;
+      align-items:center;
+    }
+    .side h2{margin:0 0 8px; font-size:16px}
+    .side p{margin:0; color:var(--muted); line-height:1.5; font-size:14px}
+
+    .reveal{
+      display:none;
+      margin-top:14px;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid var(--border);
+    }
+    .reveal img{width:100%; display:block}
+
+    footer{
+      padding:14px 22px 18px;
+      border-top:1px solid var(--border);
+      color:var(--muted);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .heart{color:var(--red)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="title">
+          <h1>For Anita Sharon Elorm Tsyi <span class="heart">❤</span></h1>
+          <p class="sub">A tiny ABCD game — finish it to unlock your surprise.</p>
+        </div>
+        <div class="pill">REF THEME • red & clean</div>
+      </header>
+
+      <main>
+        <div class="grid">
+          <section class="panel">
+            <div class="label">ABCD Game</div>
+            <div id="question" class="q"></div>
+
+            <!-- Multiple choice area -->
+            <div id="choices" class="choices"></div>
+
+            <!-- Text input area (for Q4) -->
+            <div id="textWrap" class="textWrap">
+              <input id="textAnswer" type="text" placeholder="Type anything here..." />
+              <button id="submitText" class="btn primary" type="button">Submit</button>
+            </div>
+
+            <div class="row">
+              <div class="progress">
+                <span id="stepText">Step 1 of 4</span>
+                <div id="dots" class="dots"></div>
+              </div>
+              <button id="restart" class="btn" type="button">Restart</button>
+            </div>
+
+            <div id="message" class="msg">Pick the correct answer to continue 😊</div>
+
+            <div id="reveal" class="reveal">
+              <!-- 🔁 Replace this image link with your own -->
+              <img id="revealImg" alt="Surprise" src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=1600&q=80">
+            </div>
+
+            <div style="margin-top:14px;">
+              <button id="finalBtn" class="btn primary" type="button" style="display:none;">Open your message 💌</button>
+            </div>
+          </section>
+
+          <aside class="panel side">
+            <h2>Quick notes</h2>
+            <p>
+              Q4 accepts any text. When you finish, it reveals the picture and a final message.
+            </p>
+            <div style="height:12px"></div>
+            <p>
+              Replace the picture by changing <b>revealImg src</b> in the code.
+            </p>
+          </aside>
+        </div>
+      </main>
+
+      <footer>
+        <span>Made with ❤️ — simple, free, no ads</span>
+        <span id="dateStamp"></span>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // ✅ QUESTIONS (Q4 is text and accepts anything)
+    const questions = [
+      {
+        type: "mc",
+        prompt: "A — What does EAST stand for?",
+        choices: [
+          "Anita Sharon Elorm Tsyi",
+          "Every Angel Sees Truth",
+          "Elorm And Sharon Together",
+          "Easy And Simple Thing"
+        ],
+        correctIndex: 0,
+        hint: "Think: her full name 😉"
+      },
+      {
+        type: "mc",
+        prompt: "B — Favorite song?",
+        choices: [
+          "Rose of Sharon",
+          "Oceans",
+          "Perfect",
+          "Falling"
+        ],
+        correctIndex: 0,
+        hint: "It’s the one with ‘Sharon’ 😉"
+      },
+      {
+        type: "mc",
+        prompt: "C — Little sister’s name?",
+        choices: [
+          "Pieta Grace",
+          "Grace Pieta",
+          "Pieta Joy",
+          "Pieta Faith"
+        ],
+        correctIndex: 0,
+        hint: "Two words 🙂"
+      },
+      {
+        type: "text",
+        prompt: "D — Something you're passionate about:",
+        hint: "Type anything — any answer is correct ✅"
+      }
+    ];
+
+    // ✅ FINAL MESSAGE (edit if you want)
+    const finalMessage = "Anita, you’re a blessing. Happy Valentine’s ❤️";
+
+    function openFinalMessage(){
+      alert(finalMessage);
+    }
+
+    // ---- Game logic (no need to edit) ----
+    let step = 0;
+
+    const qEl = document.getElementById("question");
+    const choicesEl = document.getElementById("choices");
+    const msgEl = document.getElementById("message");
+    const dotsEl = document.getElementById("dots");
+    const stepTextEl = document.getElementById("stepText");
+    const restartBtn = document.getElementById("restart");
+    const revealEl = document.getElementById("reveal");
+    const finalBtn = document.getElementById("finalBtn");
+    const dateStamp = document.getElementById("dateStamp");
+
+    const textWrap = document.getElementById("textWrap");
+    const textAnswer = document.getElementById("textAnswer");
+    const submitText = document.getElementById("submitText");
+
+    dateStamp.textContent = new Date().toLocaleDateString(undefined, { year:"numeric", month:"long", day:"numeric" });
+
+    function renderDots(){
+      dotsEl.innerHTML = "";
+      for(let i=0;i<questions.length;i++){
+        const d = document.createElement("div");
+        d.className = "dot" + (i <= step-1 ? " on" : "");
+        dotsEl.appendChild(d);
+      }
+    }
+
+    function render(){
+      renderDots();
+      revealEl.style.display = "none";
+      finalBtn.style.display = "none";
+
+      const q = questions[step];
+      qEl.textContent = q.prompt;
+      stepTextEl.textContent = `Step ${step+1} of ${questions.length}`;
+
+      // Reset UI areas
+      choicesEl.innerHTML = "";
+      choicesEl.style.display = "grid";
+      textWrap.style.display = "none";
+      textAnswer.value = "";
+
+      msgEl.textContent = (q.type === "text")
+        ? "Type anything and submit 😊"
+        : "Pick the correct answer to continue 😊";
+
+      if(q.type === "mc"){
+        q.choices.forEach((text, idx) => {
+          const btn = document.createElement("button");
+          btn.className = "choice";
+          btn.type = "button";
+          btn.textContent = text;
+          btn.onclick = () => handleChoice(idx);
+          choicesEl.appendChild(btn);
+        });
+      } else {
+        // text question
+        choicesEl.style.display = "none";
+        textWrap.style.display = "flex";
+      }
+    }
+
+    function handleChoice(idx){
+      const q = questions[step];
+      if(idx === q.correctIndex){
+        msgEl.textContent = "Correct ✅ moving forward…";
+        step++;
+        if(step >= questions.length){
+          finish();
+        } else {
+          setTimeout(render, 350);
+        }
+      } else {
+        msgEl.textContent = `Not quite 🙂 Hint: ${q.hint}`;
+      }
+      renderDots();
+    }
+
+    submitText.onclick = () => {
+      const q = questions[step];
+      // Accept anything (even empty), but we’ll encourage typing something.
+      if(textAnswer.value.trim().length === 0){
+        msgEl.textContent = `Type anything 🙂 Hint: ${q.hint}`;
+        return;
+      }
+      msgEl.textContent = "Nice ✅ moving forward…";
+      step++;
+      if(step >= questions.length){
+        finish();
+      } else {
+        setTimeout(render, 350);
+      }
+      renderDots();
+    };
+
+    function finish(){
+      qEl.textContent = "You did it ❤️";
+      choicesEl.innerHTML = "";
+      choicesEl.style.display = "none";
+      textWrap.style.display = "none";
+
+      stepTextEl.textContent = `Completed (${questions.length}/${questions.length})`;
+      msgEl.textContent = "Here’s your surprise 👇";
+      revealEl.style.display = "block";
+      finalBtn.style.display = "inline-flex";
+      finalBtn.onclick = openFinalMessage;
+
+      dotsEl.querySelectorAll(".dot").forEach(d => d.classList.add("on"));
+    }
+
+    restartBtn.onclick = () => { step = 0; render(); };
+
+    render();
+  </script>
+</body>
+</html>
