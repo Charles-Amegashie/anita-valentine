@@ -35,6 +35,8 @@
       border-radius:24px;
       box-shadow:0 12px 30px rgba(15,23,42,.08);
       overflow:hidden;
+      position:relative;
+      z-index:10;
     }
     header{
       padding:22px 22px 16px;
@@ -62,8 +64,7 @@
       user-select:none;
     }
     main{padding:22px}
-    .grid{display:grid; grid-template-columns: 1.2fr .8fr; gap:18px;}
-    @media (max-width:780px){ .grid{grid-template-columns:1fr} }
+    .grid{display:grid; grid-template-columns: 1fr; gap:18px; max-width:520px; margin:0 auto;}
     .panel{
       border:1px solid var(--border);
       border-radius:18px;
@@ -134,8 +135,6 @@
       display:flex;
       align-items:center;
     }
-    .side h2{margin:0 0 8px; font-size:16px}
-    .side p{margin:0; color:var(--muted); line-height:1.5; font-size:14px}
 
     .reveal{
       display:none;
@@ -157,9 +156,35 @@
       flex-wrap:wrap;
     }
     .heart{color:var(--red)}
+
+    /* Soft floating hearts */
+    .hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 5;
+    }
+    .heartFloat {
+      position: absolute;
+      bottom: -30px;
+      font-size: 14px;
+      opacity: 0;
+      animation: floatUp 6.5s linear forwards;
+      filter: blur(0.2px);
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(0) scale(0.9); opacity: 0; }
+      10%  { opacity: 0.35; }
+      70%  { opacity: 0.25; }
+      100% { transform: translateY(-110vh) scale(1.15); opacity: 0; }
+    }
   </style>
 </head>
 <body>
+  <!-- hearts layer -->
+  <div class="hearts" id="hearts"></div>
+
   <div class="wrap">
     <div class="card">
       <header>
@@ -171,7 +196,7 @@
       </header>
 
       <main>
-        <div class="grid" style="grid-template-columns:1fr; max-width:520px; margin:0 auto;">
+        <div class="grid">
           <section class="panel">
             <div class="label">ABCD Game</div>
             <div id="question" class="q"></div>
@@ -181,7 +206,7 @@
 
             <!-- Text input area (for Q4) -->
             <div id="textWrap" class="textWrap">
-              <input id="textAnswer" type="text" placeholder="Type anything here..." />
+              <input id="textAnswer" type="text" placeholder="Type here..." />
               <button id="submitText" class="btn primary" type="button">Submit</button>
             </div>
 
@@ -196,8 +221,16 @@
             <div id="message" class="msg">Pick the correct answer to continue 😊</div>
 
             <div id="reveal" class="reveal">
-              <!-- 🔁 Replace this image link with your own -->
-              <img id="revealImg" alt="Surprise" src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=1600&q=80">
+              <!-- ✅ REVEAL IMAGE (replace src with your uploaded card) -->
+              <img id="revealImg" alt="Surprise" src="anita-card.png">
+            </div>
+
+            <!-- ✅ Shows her Q4 answer on the final reveal -->
+            <div id="finalAnswer" class="msg" style="display:none;"></div>
+
+            <!-- ✅ Screenshot/share message -->
+            <div id="shareMsg" class="msg" style="display:none;">
+              If you like this gift, screenshot and share 📸❤️
             </div>
 
             <div style="margin-top:14px;">
@@ -208,14 +241,21 @@
       </main>
 
       <footer>
-        <span>Made with ❤️ — simple, free, no ads</span>
+        <span>Made with ❤️</span>
         <span id="dateStamp"></span>
       </footer>
     </div>
   </div>
 
   <script>
-    // ✅ QUESTIONS (Q4 is text and accepts anything)
+    // ✅ FINAL MESSAGE (edit if you want)
+    const finalMessage = "Anita, you’re a blessing. Happy Valentine’s ❤️";
+    function openFinalMessage(){ alert(finalMessage); }
+
+    // ✅ Capture Q4 answer to show at the end
+    let q4FinalAnswer = "";
+
+    // ✅ QUESTIONS
     const questions = [
       {
         type: "mc",
@@ -255,19 +295,28 @@
       },
       {
         type: "text",
-        prompt: "D — Something you're passionate about:",
-        hint: "Type anything — any answer is correct ✅"
+        prompt: "D — A gift you’d like to receive:",
+        hint: ""
       }
     ];
 
-    // ✅ FINAL MESSAGE (edit if you want)
-    const finalMessage = "Anita, you’re a blessing. Happy Valentine’s ❤️";
-
-    function openFinalMessage(){
-      alert(finalMessage);
+    // Soft heart animation (lightweight)
+    const heartsLayer = document.getElementById("hearts");
+    function spawnHeart(){
+      const h = document.createElement("div");
+      h.className = "heartFloat";
+      h.textContent = "❤";
+      h.style.left = Math.random() * 100 + "vw";
+      h.style.fontSize = (10 + Math.random() * 10) + "px";
+      h.style.animationDuration = (5.5 + Math.random() * 3.5) + "s";
+      h.style.opacity = (0.15 + Math.random() * 0.25).toFixed(2);
+      heartsLayer.appendChild(h);
+      setTimeout(() => h.remove(), 9000);
     }
+    setInterval(spawnHeart, 1200);
+    setTimeout(spawnHeart, 400);
 
-    // ---- Game logic (no need to edit) ----
+    // ---- Game logic ----
     let step = 0;
 
     const qEl = document.getElementById("question");
@@ -284,6 +333,9 @@
     const textAnswer = document.getElementById("textAnswer");
     const submitText = document.getElementById("submitText");
 
+    const finalAnswerEl = document.getElementById("finalAnswer");
+    const shareMsgEl = document.getElementById("shareMsg");
+
     dateStamp.textContent = new Date().toLocaleDateString(undefined, { year:"numeric", month:"long", day:"numeric" });
 
     function renderDots(){
@@ -299,6 +351,8 @@
       renderDots();
       revealEl.style.display = "none";
       finalBtn.style.display = "none";
+      finalAnswerEl.style.display = "none";
+      shareMsgEl.style.display = "none";
 
       const q = questions[step];
       qEl.textContent = q.prompt;
@@ -310,8 +364,9 @@
       textWrap.style.display = "none";
       textAnswer.value = "";
 
+      // Q4: show nothing in the message area
       msgEl.textContent = (q.type === "text")
-        ? "Type anything and submit 😊"
+        ? ""
         : "Pick the correct answer to continue 😊";
 
       if(q.type === "mc"){
@@ -346,19 +401,15 @@
       renderDots();
     }
 
+    // ✅ Store Q4 answer and continue
     submitText.onclick = () => {
-      const q = questions[step];
-      // Accept anything (even empty), but we’ll encourage typing something.
-      if(textAnswer.value.trim().length === 0){
-        msgEl.textContent = `Type anything 🙂 Hint: ${q.hint}`;
-        return;
-      }
-      msgEl.textContent = "Nice ✅ moving forward…";
+      q4FinalAnswer = textAnswer.value.trim() || "Something special ❤️";
       step++;
+
       if(step >= questions.length){
         finish();
       } else {
-        setTimeout(render, 350);
+        render();
       }
       renderDots();
     };
@@ -371,7 +422,18 @@
 
       stepTextEl.textContent = `Completed (${questions.length}/${questions.length})`;
       msgEl.textContent = "Here’s your surprise 👇";
+
+      // Show reveal image
       revealEl.style.display = "block";
+
+      // Show her answer
+      finalAnswerEl.style.display = "flex";
+      finalAnswerEl.textContent = `You’d love to receive: “${q4FinalAnswer}” ❤️`;
+
+      // Show screenshot/share message
+      shareMsgEl.style.display = "flex";
+
+      // Final button
       finalBtn.style.display = "inline-flex";
       finalBtn.onclick = openFinalMessage;
 
